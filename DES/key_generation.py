@@ -69,6 +69,20 @@ def generate_keys(initial_key):
 		C_node = C_one
 		D_node = D_one
 
+def f_encrypt(input):
+	for i in range(16):
+		L_n, R_n = split_to_multiple_lists(input, 32)
+		R_n_dash = f_prime(R_n, keys[i])
+		R_n1 = []
+		for j in range(32):
+			R_n1[j] = L_n[j] ^ R_n_dash[j]
+		ciphered_message = combine (R_n, R_n1)
+		input = ciphered_message
+	return ciphered_message;
+
+def swap_left_right(input)
+	L,R = split_to_multiple_lists(input,32)
+	return combine(R,L)
 
 
 
