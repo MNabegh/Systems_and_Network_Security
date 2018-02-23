@@ -58,6 +58,7 @@ def combine(C,D):
 	return C + D
 
 def generate_keys(initial_key):
+	initial_key = string_to_bit_array (initial_key)
 	key_prime = permute_and_eliminate(initial_key, initial_key_permutation)
 	C_node, D_node = split_to_multiple_lists(key_prime, 28) # split key to two parts
 	for i in range(16):		
@@ -65,6 +66,7 @@ def generate_keys(initial_key):
 		D_one = rotate_left(D_node, rotation_steps[i])
 		combination = combine(C_one,D_one)
 		key_one = permute_and_eliminate(combination, key_choice)
+		print (bit_array_to_HEX(key_one))
 		keys.append(key_one)
 		C_node = C_one
 		D_node = D_one
@@ -80,9 +82,27 @@ def f_encrypt(input):
 		input = ciphered_message
 	return ciphered_message;
 
-def swap_left_right(input)
+def swap_left_right(input):
 	L,R = split_to_multiple_lists(input,32)
 	return combine(R,L)
 
+def string_to_bit_array(text):#Convert a string into a list of bits
+    bit_array = list()
+    for char in text:
+        binval = binvalue(char, 8)#Get the char value on one byte
+        bit_array.extend([int(x) for x in list(binval)]) #Add the bits to the final list
+    return bit_array
 
+def binvalue(val, bitsize): #Return the binary value as a string of the given size 
+    binval = bin(val)[2:] if isinstance(val, int) else bin(ord(val))[2:]
+    if len(binval) > bitsize:
+        raise "binary value larger than the expected size"
+    while len(binval) < bitsize:
+        binval = "0"+binval #Add as many 0 as needed to get the wanted size
+    return binval
 
+def bit_array_to_HEX(val):
+    binary_string = ''.join([str(num) for num in val])
+    return hex(int(binary_string,2))
+
+generate_keys('secret_k')
