@@ -160,8 +160,6 @@ class des():
         
         self.generatekeys() #Generate all the keys
 
-        print (self.keys)
-
         text_blocks = nsplit(self.text, 8) #Split the text in blocks of 8 bytes so 64 bits
         result = list()
         for block in text_blocks:#Loop over all the blocks of data
@@ -180,6 +178,8 @@ class des():
                 tmp = self.xor(g, tmp)
                 g = d
                 d = tmp
+                if i == 0:
+                    print (bit_array_to_HEX(d+g))
             result += self.permut(d+g, PI_1) #Do the last permut and append the result to result
         final_res = bit_array_to_HEX(result)
         if padding and action==DECRYPT:

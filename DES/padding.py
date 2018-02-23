@@ -29,8 +29,3 @@ def add_padding(input):
 text = input("Enter text \n")
 bit_array = string_to_bit_array(text)
 add_padding(bit_array)
-
-
-#print (pad_length)
-#print (len(padding_array))
-#print (bit_array_to_HEX(padding_array[len(padding_array):]))
