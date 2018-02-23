@@ -183,12 +183,22 @@ def substitute(list48):
 #integrating
 def DES(input,key):
     inputInBinary= string_to_bit_array(input)
-    afterIP = permute_and_eliminate(inputInBinary,IP)
+    inputInBinary = add_padding(inputInBinary)
+    encrypted = []
     generate_keys(key)
-    ciphered_message= f_encrypt(afterIP)
-    swapped= swap_left_right(ciphered_message)
-    encrypted = permute_and_eliminate(swapped,IP_inverse)
+    for i in range(0,len(inputInBinary),64):
+        afterIP = permute_and_eliminate(inputInBinary[i:i+64],IP)
+        ciphered_message= f_encrypt(afterIP)
+        swapped= swap_left_right(ciphered_message)
+        encrypted += permute_and_eliminate(swapped,IP_inverse)
     return encrypted
 
-encrypted = DES("Hello wo", "secret_k")
+def add_padding(input):
+    pad_length = 64 - (len(input) % 64)
+    last_byte = '{0:08b}'.format(pad_length)
+    padding_array = [0] * (pad_length - 8) + [int(bit) for bit in last_byte]
+    print ()
+    return input + padding_array
+
+encrypted = DES("Hello world", "secret_k")
 print (bit_array_to_HEX(encrypted))
