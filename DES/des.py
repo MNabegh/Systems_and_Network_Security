@@ -244,6 +244,8 @@ def CBC(input, key):
             encrypted += c1
     return encrypted
 
-
-output = ECB('Hello world', 'secret_k')
+file = open('plaintext.txt', "r")
+string = file.read()
+file.close()
+output = CBC(string, 'secret_k')
 print(bit_array_to_HEX(output))
