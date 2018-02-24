@@ -245,5 +245,5 @@ def CBC(input, key):
     return encrypted
 
 
-output = CBC('Hello world', 'secret_k')
+output = ECB('Hello world', 'secret_k')
 print(bit_array_to_HEX(output))
