@@ -195,6 +195,7 @@ def DES(input,key):
 
 def add_padding(input):
     pad_length = 64 - (len(input) % 64)
+    pad_length_in_HEX = pad_length / 8
     last_byte = '{0:08b}'.format(pad_length)
     padding_array = [0] * (pad_length - 8) + [int(bit) for bit in last_byte]
     print ()
