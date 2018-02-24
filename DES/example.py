@@ -237,9 +237,9 @@ class des():
     
 if __name__ == '__main__':
     key = "secret_k"
-    text= "Hello wo"
+    text= "Hello world"
     d = des()
-    r = d.encrypt(key,text)
+    r = d.encrypt(key,text, True)
    # r2 = d.decrypt(key,r)
     print ("Ciphered: %r" % r)
    # print ("Deciphered: ", r2)

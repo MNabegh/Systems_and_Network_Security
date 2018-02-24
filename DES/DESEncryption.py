@@ -106,7 +106,7 @@ def split_to_multiple_lists (list, step):
 
 
 def rotate_left (vector, steps):
-	return vector[steps:] + vector [:steps] 
+	return vector[steps:] + vector [:steps]
 
 def combine(C,D):
 	return C + D
@@ -123,10 +123,10 @@ def string_to_bit_array(text):#Convert a string into a list of bits
         bit_array.extend([int(x) for x in list(binval)]) #Add the bits to the final list
     return bit_array
 
-def binvalue(val, bitsize): #Return the binary value as a string of the given size 
+def binvalue(val, bitsize): #Return the binary value as a string of the given size
     binval = bin(val)[2:] if isinstance(val, int) else bin(ord(val))[2:]
     if len(binval) > bitsize:
-        raise "binary value larger than the expected size"
+        raise ("binary value larger than the expected size")
     while len(binval) < bitsize:
         binval = "0"+binval #Add as many 0 as needed to get the wanted size
     return binval
@@ -139,7 +139,7 @@ def generate_keys(initial_key):
 	initial_key = string_to_bit_array (initial_key)
 	key_prime = permute_and_eliminate(initial_key, initial_key_permutation)
 	C_node, D_node = split_to_multiple_lists(key_prime, 28) # split key to two parts
-	for i in range(16):		
+	for i in range(16):
 		C_one = rotate_left(C_node, rotation_steps[i])
 		D_one = rotate_left(D_node, rotation_steps[i])
 		combination = combine(C_one,D_one)
@@ -178,7 +178,7 @@ def substitute(list48):
         val = S_boxes[i][row][column]
         bin = binvalue(val, 4)  # Convert the value to binary
         combinedList += [int(x) for x in bin]  # And append it to the resulting list
-    return combinedList        
+    return combinedList
 
 #integrating
 def DES(input,key):
@@ -195,11 +195,12 @@ def DES(input,key):
 
 def add_padding(input):
     pad_length = 64 - (len(input) % 64)
-    pad_length_in_HEX = pad_length / 8
-    last_byte = '{0:08b}'.format(pad_length)
+    last_byte = '{0:08b}'.format(int(pad_length/8))
     padding_array = [0] * (pad_length - 8) + [int(bit) for bit in last_byte]
     print ()
     return input + padding_array
 
 encrypted = DES("Hello world", "secret_k")
-print (bit_array_to_HEX(encrypted))
+print (bit_array_to_HEX(encrypted)[2:])
+print("dfe5fde5da9f5c9d612c1a5f8acdcbc3")
+print("DFE5FDE5DA9F5C9D612C1A5F8ACDCBC3")
