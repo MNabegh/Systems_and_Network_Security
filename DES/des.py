@@ -244,8 +244,28 @@ def CBC(input, key):
             encrypted += c1
     return encrypted
 
+#def bit_array_to_text(array):
+#    text = ''
+#    array = [str(bit) for bit in array]
+#    for i in range(0, len(array), 8):
+#        text += chr(int(''.join(array[i:i+8])))
+
+#    return text
+
+def bit_array_to_string(array): #Recreate the string from the bit array
+    res = ''.join([chr(int(y,2)) for y in [''.join([str(x) for x in bytes]) for bytes in  split_to_multiple_lists(array,8)]])   
+    return res
+
+
 file = open('plaintext.txt', "r")
 string = file.read()
 file.close()
-output = CBC(string, 'secret_k')
+output = ECB(string, 'secret_k')
 print(bit_array_to_HEX(output))
+
+output_in_text = bit_array_to_string(output)
+output_file = open('ciphertext .txt', "r+")
+output_file.write(output_in_text)
+output_file.close()
+
+print (output_in_text)
