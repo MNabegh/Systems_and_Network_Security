@@ -146,6 +146,17 @@ def f_encrypt(input):
         input = ciphered_message
     return ciphered_message;
 
+def f_decrypt(input):
+    global keys
+    keys = keys[::-1]
+    for i in range(16):
+        L_n1, R_n1 = split_to_multiple_lists(input, 32)
+        R_n_dash = f_prime(L_n1, keys[i])
+        L_n = [x ^ y for x, y in zip(R_n1, R_n_dash)]
+        decrypted_message = combine(L_n, L_n1)
+        input = decrypted_message
+    return decrypted_message;
+
 
 def f_prime(input, key):
     expand_output = permute_and_eliminate(input, expansion_table)
@@ -197,17 +208,28 @@ def bit_array_to_HEX(val):
     return hex(int(binary_string, 2))
 
 
-def ECB(input, key):
-    inputInBinary = string_to_bit_array(input)
-    inputInBinary = add_padding(inputInBinary)
+def ECB(input, key, ENCRYPT):
+    if ENCRYPT:
+        inputInBinary = string_to_bit_array(input)
+        inputInBinary = add_padding(inputInBinary)
+    else:
+        inputInBinary = input
     encrypted = []
-    generate_keys(key)
+    if ENCRYPT:
+        generate_keys(key)
     for i in range(0, len(inputInBinary), 64):
         permutation_output = permute_and_eliminate(inputInBinary[i:i + 64], IP)
-        print(len(inputInBinary[i:i + 64]))
-        f_output = f_encrypt(permutation_output)
-        swap_output = swap_left_right(f_output)
+#        print(len(inputInBinary[i:i + 64]))
+        if ENCRYPT:
+            f_output = f_encrypt(permutation_output)
+            swap_output = swap_left_right(f_output)
+        else:
+            permutation_output = swap_left_right(permutation_output)
+            f_output = f_decrypt(permutation_output)
+            swap_output = f_output
         encrypted += permute_and_eliminate(swap_output, IP_inverse)
+    if not ENCRYPT:
+        encrypted = remove_padding(encrypted)
     return encrypted
 
 
@@ -217,6 +239,13 @@ def add_padding(input):
     padding_array = [0] * (pad_length - 8) + [int(bit) for bit in last_byte]
     print()
     return input + padding_array
+
+def remove_padding(input):
+    pad_length = input[56:]
+    pad_length = [str(bit) for bit in pad_length]
+    pad_length = ''.join(pad_length)
+    pad_length = int(pad_length, 2)
+    return input[:pad_length*8]
 
 
 initial_vector = string_to_bit_array('TESTTEST')
@@ -260,9 +289,11 @@ def bit_array_to_string(array): #Recreate the string from the bit array
 file = open('plaintext.txt', "r")
 string = file.read()
 file.close()
-output = ECB(string, 'secret_k')
+print (string)
+output = ECB(string, 'secret_k', True)
 print(bit_array_to_HEX(output))
-
+decrypted_message = bit_array_to_string(ECB(output, 'secret_k', False))
+print (decrypted_message)
 output_in_text = bit_array_to_string(output)
 output_file = open('ciphertext .txt', "r+")
 output_file.write(output_in_text)
