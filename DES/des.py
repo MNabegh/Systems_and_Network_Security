@@ -131,7 +131,6 @@ def generate_keys(initial_key):
         D_one = rotate_left(D_node, rotation_steps[i])
         combination = combine(C_one, D_one)
         key_one = permute_and_eliminate(combination, key_choice)
-        # print(bit_array_to_HEX(key_one))
         keys.append(key_one)
         C_node = C_one
         D_node = D_one
@@ -147,8 +146,6 @@ def f_encrypt(input):
     return ciphered_message;
 
 def f_decrypt(input):
-    global keys
-    keys = keys[::-1]
     for i in range(16):
         L_n1, R_n1 = split_to_multiple_lists(input, 32)
         R_n_dash = f_prime(L_n1, keys[i])
@@ -212,14 +209,14 @@ def ECB(input, key, ENCRYPT):
     if ENCRYPT:
         inputInBinary = string_to_bit_array(input)
         inputInBinary = add_padding(inputInBinary)
+        generate_keys(key)
     else:
+        global keys
+        keys = keys[::-1]
         inputInBinary = input
     encrypted = []
-    if ENCRYPT:
-        generate_keys(key)
     for i in range(0, len(inputInBinary), 64):
         permutation_output = permute_and_eliminate(inputInBinary[i:i + 64], IP)
-#        print(len(inputInBinary[i:i + 64]))
         if ENCRYPT:
             f_output = f_encrypt(permutation_output)
             swap_output = swap_left_right(f_output)
@@ -237,15 +234,15 @@ def add_padding(input):
     pad_length = 64 - (len(input) % 64)
     last_byte = '{0:08b}'.format(int(pad_length/8))
     padding_array = [0] * (pad_length - 8) + [int(bit) for bit in last_byte]
-    print()
+    print (len(input))
     return input + padding_array
 
 def remove_padding(input):
-    pad_length = input[56:]
+    pad_length = input[len(input)-8:]
     pad_length = [str(bit) for bit in pad_length]
     pad_length = ''.join(pad_length)
     pad_length = int(pad_length, 2)
-    return input[:pad_length*8]
+    return input[:len(input)-pad_length*8]
 
 
 initial_vector = string_to_bit_array('TESTTEST')
@@ -289,8 +286,7 @@ def bit_array_to_string(array): #Recreate the string from the bit array
 file = open('plaintext.txt', "r")
 string = file.read()
 file.close()
-print (string)
-output = ECB(string, 'secret_k', True)
+output = ECB(string[:len(string)-1], 'secret_k', True)
 print(bit_array_to_HEX(output))
 decrypted_message = bit_array_to_string(ECB(output, 'secret_k', False))
 print (decrypted_message)
